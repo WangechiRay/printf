@@ -1,34 +1,27 @@
-#define _MAIN_H
-#ifndef _MAIN_H
+#ifndef MAIN_H
+#define MAIN_H
 
 #include <stdarg.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <stdio.h>
-
-int _printf(const char *format, ...);
-int _position(const char *s, int n);
-int _strlen(char *s);
-char *_strcat(char *dest, char *src, int n);
-int _abs(int n);
-int _numlen(int n);
-void *rev_string(char *s);
 
 /**
- * struct type - Struct data type
- *
- * @op: data type argument
- * @f: The function associated
+ *struct convert - defines a structure for symbols and functions
+ *@sym: The operator
+ *@f: The function associated
  */
-
-typedef struct type
+struct convert
 {
-	char *op;
-	char *(*f)(va_list);
-} type_t;
+  char *sym;
+  int (*f)(va_list);
+};
+typedef struct convert conver_t;
 
-char *print_c(va_list list);
-char *print_s(va_list list);
-char *print_i(va_list list);
-char *print_bin(va_list list);
+int parser(const char *format, conver_t f_list[], va_list arg_list);
+int _printf(const char *format, ...);
+int _write_char(char);
+char print_char(va_list);
+char print_string(va_list);
+char print_percent(va_list);
+
 #endif 
