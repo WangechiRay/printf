@@ -1,89 +1,73 @@
 #include "main.h"
-#include <stdarg.h>
-#include <stdio.h>
-#include <stddef.h>
-#include <stdlib.h>
 
 /**
- * _printf-function that produces output according to a format.
- * @format:character string
- *
- * Return: number of characters printed
- */
-
-int (*get_op(const char c))(va_list)
-{
-	int i = 0;
-
-	flags_p fp[] = {
-		{"c", print_char},
-		{"s", print_str},
-		{"i", print_nbr},
-		{"d", print_nbr},
-		{"b", print_binary},
-		{"o", print_octal},
-		{"x", print_hexa_lower},
-		{"X", print_hexa_upper},
-		{"u", print_unsigned},
-		{"S", print_str_unprintable},
-		{"r", print_str_reverse},
-		{"p", print_ptr},
-		{"R", print_rot13},
-		{"%", print_percent}
-	};
-	while (i < 14)
-	{
-		if (c == fp[i].c[0])
-		{
-			return (fp[i].f);
-		}
-		i++;
-	}
-	return (NULL);
-}
-
-/**
- * _printf - Reproduce behavior of printf function
- * @format: format string
- * Return: value of printed chars
+ * _printf - custom function that format and print data
+ * @format:  list of types of arguments passed to the function
+ * Return: int
  */
 
 int _printf(const char *format, ...)
 {
-	va_list ap;
-	int sum = 0, i = 0;
-	int (*func)();
+	va_list list;
+	int idx, j;
+	int len_buf = 0;
+	char *s;
+	char *create_buff;
 
-	if (!format || (format[0] == '%' && format[1] == '\0'))
-		return (-1);
-	va_start(ap, format);
-
-	while (format[i])
+	type_t ops[] = {
+		{"c", print_c},
+		{"s", print_s},
+		{"i", print_i},
+		{"d", print_i},
+		{"b", print_bin},
+		{NULL, NULL}
+	};
+	create_buff = malloc(1024 * sizeof(char));
+	if (create_buff == NULL)
 	{
-		if (format[i] == '%')
+		free(create_buff);
+		return (-1);
+	}
+	va_start(list, format);
+	if (format == NULL || list == NULL)
+		return (-1);
+	for (idx = 0; format[idx] != '\0'; idx++)
+	{
+		if (format[idx] == '%' && format[idx + 1] == '%')
+			continue;
+		else if (format[idx] == '%')
 		{
-			if (format[i + 1] != '\0')
-				func = get_op(format[i + 1]);
-			if (func == NULL)
+			if (format[idx + 1] == ' ')
+				idx += _position(format, idx);
+			for (j = 0; ops[j].f != NULL; j++)
 			{
-				_putchar(format[i]);
-				sum++;
-				i++;
+				if (format[idx + 1] == *(ops[j].op))
+				{
+					s = ops[j].f(list);
+					if (s == NULL)
+						return (-1);
+					_strlen(s);
+					_strcat(create_buff, s, len_buf);
+					len_buf += _strlen(s);
+					idx++;
+					break;
+				}
 			}
-			else
+			if (ops[j].f == NULL)
 			{
-				sum += func(ap);
-				i += 2;
-				continue;
+				create_buff[len_buf] = format[idx];
+				len_buf++;
 			}
 		}
 		else
 		{
-			_putchar(format[i]);
-			sum++;
-			i++;
+			create_buff[len_buf] = format[idx];
+			len_buf++;
 		}
 	}
-	va_end(ap);
-	return (sum);
+	create_buff[len_buf] = '\0';
+	write(1, create_buff, len_buf);
+	va_end(list);
+	free(create_buff);
+	return (len_buf);
 }

@@ -1,46 +1,34 @@
-#define MAIN_H
-#ifndef MAIN_H
+#define _MAIN_H
+#ifndef _MAIN_H
 
 #include <stdarg.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 int _printf(const char *format, ...);
-int print_char(va_list ap);
-int print_str(va_list ap);
-int print_nbr(va_list ap);
-int print_binary(va_list ap);
-int print_octal(va_list ap);
-int print_hexa_lower(va_list ap);
-int print_hexa_upper(va_list ap);
-int print_unsigned(va_list ap);
-int print_str_unprintable(va_list ap);
-int print_str_reverse(va_list ap);
-int print_ptr(va_list ap);
-int print_rot13(va_list ap);
-int print_percent(va_list ap __attribute__((unused)));
-int print_number(int n);
-int print_unsigned_number(unsigned int n);
-int _putchar(char c);
-int _puts(char *str, int ascii);
-int _nbr_len(int prmNumber);
-int _strlen_recursion(char *s);
-int convert_alpha_numeric(int nb, int upper);
-char *convert_rot13(char *str);
-char *convert_base(unsigned long nb, unsigned int base, int upper);
-char *_strdup(char *str);
-char *convert_base_pointer(unsigned long p);
+int _position(const char *s, int n);
+int _strlen(char *s);
+char *_strcat(char *dest, char *src, int n);
+int _abs(int n);
+int _numlen(int n);
+void *rev_string(char *s);
 
 /**
- * struct specifier - struct specifier
- * @valid: the valid character.
- * @f: the functions associated.
+ * struct type - Struct data type
  *
+ * @op: data type argument
+ * @f: The function associated
  */
-typedef struct specifier
-{
-	char *valid;
-	int (*f)(va_list);
-} flags_p;
 
-#endif
+typedef struct type
+{
+	char *op;
+	char *(*f)(va_list);
+} type_t;
+
+char *print_c(va_list list);
+char *print_s(va_list list);
+char *print_i(va_list list);
+char *print_bin(va_list list);
+#endif 
